@@ -7,13 +7,34 @@ on:
   workflow_dispatch:
 
 jobs:
-  wedding:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: install dependencies
-        run: npm install
+      - name: Install dependencies
+        run: |
+          cd mbti  # mbti 폴더로 이동
+          npm install
 
-      - name: Check eslint
-        run: npm run lint
+      - name: Check ESLint
+        run: |
+          cd mbti  # mbti 폴더로 이동
+          npm run lint  # ESLint 실행
+
+      - name: Build project
+        run: |
+          cd mbti  # mbti 폴더로 이동
+          npm run build  # 빌드 명령어 실행
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          # VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+        run: |
+          cd mbti  # mbti 폴더로 이동
+          npm install -g vercel  # Vercel CLI 설치
+          vercel --prod --confirm  # 배포 실행
